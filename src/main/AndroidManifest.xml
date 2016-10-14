@@ -7,6 +7,8 @@
             android:minSdkVersion="23"
             android:targetSdkVersion="24" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
             android:label="@string/app_name"
             android:icon="@drawable/ic_launcher">
@@ -14,7 +16,7 @@
         <activity
                 android:name="HanzeSchedule"
                 android:label="@string/app_name"
-                android:theme="@android:style/Theme.Material">
+                android:theme="@style/Theme.HanzeSchedule">
 
             <intent-filter>
 
