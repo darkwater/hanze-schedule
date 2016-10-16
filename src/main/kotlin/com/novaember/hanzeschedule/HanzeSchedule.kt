@@ -4,7 +4,9 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.app.DialogFragment
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.util.Log
 import android.widget.TextView
@@ -14,51 +16,81 @@ import com.android.volley.Response
 import kotlinx.android.synthetic.main.activity_main.scheduleViewPager
 
 class HanzeSchedule : FragmentActivity() {
+    var dataFragment: DataFragment? = null
 
-    var digirooster: Digirooster? = null
+    var digirooster: Digirooster
+        get() = dataFragment!!.digirooster
+        set(value) { dataFragment!!.digirooster = value }
+
+    var activeSchedule: Schedule?
+        get() = dataFragment?.activeSchedule
+        set(value) { dataFragment?.activeSchedule = value }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize Digirooster API
-        digirooster = Digirooster(this)
+        dataFragment = supportFragmentManager.findFragmentByTag("data") as DataFragment?
 
-        // Check for stored credentials
-        val pref = getPreferences(Context.MODE_PRIVATE)
-        val username = pref.getString("digirooster-username", "")
-        val password = pref.getString("digirooster-password", "")
+        if (dataFragment == null) {
+            dataFragment = DataFragment()
+            supportFragmentManager.beginTransaction().add(dataFragment, "data").commit()
 
-        if (username != "" && password != "") {
-            // Log in with stored credentials
-            logIn(username, password)
-        } else {
-            // Ask for credentials
-            val loginDialog = LoginCredentialsDialog()
+            // Initialize Digirooster API
+            digirooster = Digirooster(this)
 
-            loginDialog.onLogin { username, password ->
+            // Check for stored credentials
+            val pref = getPreferences(Context.MODE_PRIVATE)
+            val username = pref.getString("digirooster-username", "")
+            val password = pref.getString("digirooster-password", "")
+
+            if (username != "" && password != "") {
+                // Log in with stored credentials
                 logIn(username, password)
+            } else {
+                // Ask for credentials
+                val loginDialog = LoginCredentialsDialog()
 
-                // Store credentials
-                val editor = pref.edit()
-                editor.putString("digirooster-username", username)
-                editor.putString("digirooster-password", password)
-                editor.commit()
+                loginDialog.onLogin { username, password ->
+                    logIn(username, password)
+
+                    // Store credentials
+                    val editor = pref.edit()
+                    editor.putString("digirooster-username", username)
+                    editor.putString("digirooster-password", password)
+                    editor.commit()
+                }
+
+                loginDialog.onQuit {
+                    finish()
+                }
+
+                loginDialog.show(fragmentManager, "login")
             }
-
-            loginDialog.onQuit {
-                finish()
-            }
-
-            loginDialog.show(getFragmentManager(), "login")
+        } else {
+            scheduleViewPager.adapter = SchedulePagerAdapter(this)
         }
+
+        scheduleViewPager.pageMargin = dpToPx(1)
+        scheduleViewPager.setPageMarginDrawable(ColorDrawable(resources.getColor(R.color.weekschedule_lines, null)))
     }
 
     private fun logIn(username: String, password: String) {
-        digirooster?.logIn(username, password) { response ->
-            digirooster?.getSchedule("DIRN", Digirooster.Resource.STAFF) { schedule ->
-                scheduleViewPager.adapter = SchedulePagerAdapter(getSupportFragmentManager(), schedule)
+        digirooster.logIn(username, password) { response ->
+            digirooster.getSchedule("DIRN", Digirooster.Resource.STAFF) { schedule ->
+                activeSchedule = schedule
+                scheduleViewPager.adapter = SchedulePagerAdapter(this)
             }
+        }
+    }
+
+    class DataFragment : Fragment() {
+        lateinit var digirooster: Digirooster
+        var activeSchedule: Schedule? = null
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            retainInstance = true
         }
     }
 

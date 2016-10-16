@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<styles>
+
+    <style name="Theme.HanzeSchedule" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+
+    </style>
+
+    <style name="LoadingSpinner" parent="@android:style/Widget.ProgressBar.Large"></style>
+
+</styles>

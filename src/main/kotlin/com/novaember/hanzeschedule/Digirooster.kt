@@ -19,7 +19,6 @@ import java.util.HashMap
 import org.json.JSONObject
 
 class Digirooster(val context: Context, val baseUrl: String = "https://digirooster.hanze.nl") {
-
     var queue: RequestQueue
 
     init {
@@ -36,7 +35,6 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
     fun logIn(username: String, password: String, callback: (Boolean) -> Unit) {
         val successListener = object : Response.Listener<String> {
             override fun onResponse(response: String) {
-                Log.d("HanzeSchedule", response)
                 callback(true)
             }
         }
@@ -44,7 +42,7 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
         val errorListener = object : Response.ErrorListener {
             override fun onErrorResponse(error: VolleyError) {
                 Log.e("HanzeSchedule", "Something went wrong during login", error)
-                Log.e("HanzeSchedule", error.networkResponse.data.toString(StandardCharsets.UTF_8))
+                // Log.e("HanzeSchedule", error.networkResponse.data.toString(StandardCharsets.UTF_8))
                 callback(false)
             }
         }
@@ -67,7 +65,6 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
     fun getSchedule(resourceId: String, resource: Resource, callback: (Schedule) -> Unit) {
         val successListener = object : Response.Listener<JSONObject> {
             override fun onResponse(response: JSONObject) {
-                Log.d("HanzeSchedule", response.getString("d"))
                 callback(Schedule(JSONObject(response.getString("d"))))
             }
         }
@@ -75,7 +72,7 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
         val errorListener = object : Response.ErrorListener {
             override fun onErrorResponse(error: VolleyError) {
                 Log.e("HanzeSchedule", "Something went wrong during GetSchedule", error)
-                Log.e("HanzeSchedule", error.networkResponse.data.toString(StandardCharsets.UTF_8))
+                // Log.e("HanzeSchedule", error.networkResponse.data.toString(StandardCharsets.UTF_8))
                 // callback(null)
             }
         }
