@@ -1,5 +1,6 @@
 package com.novaember.hanzeschedule
 
+import java.util.Calendar
 import java.util.Date
 
 import org.json.JSONArray
@@ -42,5 +43,13 @@ class Schedule(json: JSONObject) {
         val number = json.getInt("WeekNumber")
         val start  = Date(json.getLong("WeekStart"))
         val end    = Date(json.getLong("WeekEnd"))
+
+        // Get the dates for this week (at 0:00)
+        private val calendar = Calendar.getInstance()
+        val days = (0 until 6).map {
+            calendar.time = start
+            calendar.add(Calendar.DATE, it)
+            calendar.time
+        }
     }
 }

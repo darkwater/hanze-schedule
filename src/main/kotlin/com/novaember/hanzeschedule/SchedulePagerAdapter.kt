@@ -12,9 +12,7 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout.LayoutParams
 import android.widget.TextView
 
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Calendar
 
 import kotlinx.android.synthetic.main.fragment_weekschedule.view.*
 import kotlinx.android.synthetic.main.fragment_weekschedule_hourmarker.view.*
@@ -28,23 +26,24 @@ class SchedulePagerAdapter(val activity: HanzeSchedule) : FragmentStatePagerAdap
         return schedule?.weeks?.size ?: 0
     }
 
-    override fun getItem(weekNumber: Int): Fragment {
+    override fun getItem(weekIndex: Int): Fragment {
         val fragment = ScheduleFragment()
         val bundle = Bundle()
-        bundle.putInt("weekNumber", weekNumber)
+        bundle.putInt("weekIndex", weekIndex)
         fragment.setArguments(bundle)
 
         return fragment
     }
 
-    override fun getPageTitle(weekNumber: Int): String {
-        return schedule?.weeks?.get(weekNumber)?.number.toString()
+    override fun getPageTitle(weekIndex: Int): String {
+        return schedule?.weeks?.get(weekIndex)?.number.toString()
     }
 
     class ScheduleFragment() : Fragment() {
-        var weekNumber = 0
         val schedule: Schedule?
             get() = (activity as HanzeSchedule).activeSchedule
+
+        lateinit var week: Schedule.Week
 
         val startHour  = 8
         val endHour    = 20
@@ -52,7 +51,7 @@ class SchedulePagerAdapter(val activity: HanzeSchedule) : FragmentStatePagerAdap
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            weekNumber = arguments.getInt("weekNumber")
+            week = schedule!!.weeks[arguments.getInt("weekIndex")]
         }
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -78,19 +77,9 @@ class SchedulePagerAdapter(val activity: HanzeSchedule) : FragmentStatePagerAdap
                 hourmarkerHolder.addView(hourmarker)
             }
 
-            // Get the dates for this week (at 0:00)
-            val week = schedule.weeks.get(weekNumber)
-            val dateFormat = SimpleDateFormat("MMM d")
-            val calendar = Calendar.getInstance()
-            val days = (0 until 5).map {
-                calendar.time = week.start
-                calendar.add(Calendar.DATE, it)
-                calendar.time
-            }
-
             // Set column header texts
             (1..5).forEach {
-                (view.column_headers.getChildAt(it) as TextView).text = "${dateFormat.format(days[it - 1])}"
+                (view.column_headers.getChildAt(it) as TextView).text = "${week.days[it - 1].format("MMM d")}"
             }
 
             // Events
@@ -107,9 +96,15 @@ class SchedulePagerAdapter(val activity: HanzeSchedule) : FragmentStatePagerAdap
                 layoutParams.topMargin = top
                 eventView.layoutParams = layoutParams
 
+                // Set color and text
                 eventView.event_color.setBackgroundColor(event.color)
                 eventView.primary_text.text   = event.shortDesc
                 eventView.secondary_text.text = event.location
+
+                // Go to this day on click
+                eventView.setOnClickListener({ view ->
+                    (activity as HanzeSchedule).showDaySchedule(week)
+                })
 
                 column.addView(eventView)
             }

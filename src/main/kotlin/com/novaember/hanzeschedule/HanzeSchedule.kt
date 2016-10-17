@@ -6,16 +6,17 @@ import android.app.DialogFragment
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.TextView
 
 import com.android.volley.Response
 
-import kotlinx.android.synthetic.main.activity_main.scheduleViewPager
+import kotlinx.android.synthetic.main.activity_main.*
 
-class HanzeSchedule : FragmentActivity() {
+class HanzeSchedule : AppCompatActivity() {
     var dataFragment: DataFragment? = null
 
     var digirooster: Digirooster
@@ -29,6 +30,7 @@ class HanzeSchedule : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(toolbar)
 
         dataFragment = supportFragmentManager.findFragmentByTag("data") as DataFragment?
 
@@ -75,13 +77,22 @@ class HanzeSchedule : FragmentActivity() {
         scheduleViewPager.setPageMarginDrawable(ColorDrawable(resources.getColor(R.color.weekschedule_lines, null)))
     }
 
-    private fun logIn(username: String, password: String) {
+    fun logIn(username: String, password: String) {
         digirooster.logIn(username, password) { response ->
-            digirooster.getSchedule("DIRN", Digirooster.Resource.STAFF) { schedule ->
-                activeSchedule = schedule
-                scheduleViewPager.adapter = SchedulePagerAdapter(this)
-            }
+            selectSchedule("DIRN", Digirooster.Resource.STAFF)
         }
+    }
+
+    fun selectSchedule(resource: String, resourceType: Digirooster.Resource) {
+        digirooster.getSchedule(resource, resourceType) { schedule ->
+            activeSchedule = schedule
+            scheduleViewPager.adapter = SchedulePagerAdapter(this)
+        }
+    }
+
+    fun showDaySchedule(week: Schedule.Week) {
+        scheduleViewPager.adapter = DaySchedulePagerAdapter(week, this)
+        tab_layout.tabMode = TabLayout.MODE_FIXED
     }
 
     class DataFragment : Fragment() {
