@@ -13,6 +13,8 @@ class Schedule(json: JSONObject) {
 
     val changes = json.getJSONArray("ChangeData")
 
+    // Let's hope events and weeks are already properly sorted. Apparently sorting them here is a pain.
+
     val events = (0 until json.getJSONArray("ActivityData").length())
     .map { Event(json.getJSONArray("ActivityData").getJSONObject(it)) }
 
@@ -33,7 +35,7 @@ class Schedule(json: JSONObject) {
         val left        = json.getInt("Left")
 
         val dayOfWeek = start.day
-        val duration  = (end.hours + end.minutes / 60f) - (start.hours + start.minutes / 60f)
+        val duration  = end.hourFloat() - start.hourFloat()
 
         val shortDesc = description.substringAfter('/').take(3)
         val color     = location.toColor()

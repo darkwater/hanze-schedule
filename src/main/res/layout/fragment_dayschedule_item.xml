@@ -6,21 +6,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <View
-            android:id="@+id/color"
-            android:layout_width="6dp"
+    <RelativeLayout
+            android:layout_width="24dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="48dp"
-            android:layout_marginRight="24dp"
-            android:background="#ffaf00" />
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="16dp">
+
+        <View
+                android:id="@+id/nub"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:background="#ffaf00" />
+
+        <View
+                android:id="@+id/line"
+                android:layout_width="6dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/nub"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="#ffaf00" />
+
+    </RelativeLayout>
 
     <TextView
             android:id="@+id/textview"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="top|left"
-            android:paddingTop="4dp"
             android:textSize="16sp"
-            android:textColor="@android:color/primary_text_light" />
+            android:textColor="@android:color/primary_text_light"
+            android:lineSpacingMultiplier="1.5" />
 
 </LinearLayout>

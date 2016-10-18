@@ -79,7 +79,7 @@ class HanzeSchedule : AppCompatActivity() {
 
     fun logIn(username: String, password: String) {
         digirooster.logIn(username, password) { response ->
-            selectSchedule("DIRN", Digirooster.Resource.STAFF)
+            selectSchedule("99030BAD69623C854AA2CF1AB103A3C7", Digirooster.Resource.CLASS)
         }
     }
 
@@ -87,6 +87,7 @@ class HanzeSchedule : AppCompatActivity() {
         digirooster.getSchedule(resource, resourceType) { schedule ->
             activeSchedule = schedule
             scheduleViewPager.adapter = SchedulePagerAdapter(this)
+            scheduleViewPager.pageMargin = 0
         }
     }
 

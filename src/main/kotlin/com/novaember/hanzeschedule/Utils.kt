@@ -24,3 +24,7 @@ fun Date.format(fmt: String): String {
     val dateFormat = SimpleDateFormat(fmt)
     return dateFormat.format(this)
 }
+
+fun Date.hourFloat(): Float {
+    return hours + minutes / 60f + seconds / 3600f
+}
