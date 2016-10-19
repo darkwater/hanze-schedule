@@ -8,4 +8,8 @@
     <string name="log_in">Log in</string>
     <string name="quit">Quit</string>
 
+    <string name="login_body">
+        Please use the credentials you use to log in to Digirooster.
+    </string>
+
 </resources>

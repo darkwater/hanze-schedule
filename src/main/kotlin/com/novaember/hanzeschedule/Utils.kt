@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.util.TypedValue
 
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.Calendar
 
 fun Context.dpToPx(dp: Float): Int {
     return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
@@ -20,11 +20,17 @@ fun String.toColor(): Int {
     return Color.HSVToColor(floatArrayOf(hue.toFloat(), 0.95f, 0.95f))
 }
 
-fun Date.format(fmt: String): String {
+fun Calendar.format(fmt: String): String {
     val dateFormat = SimpleDateFormat(fmt)
-    return dateFormat.format(this)
+    return dateFormat.format(time)
 }
 
-fun Date.hourFloat(): Float {
-    return hours + minutes / 60f + seconds / 3600f
+fun Long.toCalendar(): Calendar {
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = this + 2 * 3600 * 1000 // how to timezone
+    return calendar
+}
+
+fun Calendar.hourFloat(): Float {
+    return (timeInMillis.toDouble() / (3600 * 1000) % 24).toFloat()
 }

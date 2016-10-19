@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.app.DialogFragment
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.design.widget.TabLayout
@@ -14,35 +15,20 @@ import android.widget.TextView
 
 import com.android.volley.Response
 
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_weekschedule.*
 
-class HanzeSchedule : AppCompatActivity() {
-    var dataFragment: DataFragment? = null
-
-    var digirooster: Digirooster
-        get() = dataFragment!!.digirooster
-        set(value) { dataFragment!!.digirooster = value }
-
-    var activeSchedule: Schedule?
-        get() = dataFragment?.activeSchedule
-        set(value) { dataFragment?.activeSchedule = value }
-
+class WeekScheduleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_weekschedule)
         setSupportActionBar(toolbar)
 
-        dataFragment = supportFragmentManager.findFragmentByTag("data") as DataFragment?
-
-        if (dataFragment == null) {
-            dataFragment = DataFragment()
-            supportFragmentManager.beginTransaction().add(dataFragment, "data").commit()
-
+        if (Session.digirooster == null) {
             // Initialize Digirooster API
-            digirooster = Digirooster(this)
+            Session.digirooster = Digirooster(this)
 
             // Check for stored credentials
-            val pref = getPreferences(Context.MODE_PRIVATE)
+            val pref = getSharedPreferences("HanzeSchedule", Context.MODE_PRIVATE)
             val username = pref.getString("digirooster-username", "")
             val password = pref.getString("digirooster-password", "")
 
@@ -70,7 +56,7 @@ class HanzeSchedule : AppCompatActivity() {
                 loginDialog.show(fragmentManager, "login")
             }
         } else {
-            scheduleViewPager.adapter = SchedulePagerAdapter(this)
+            scheduleViewPager.adapter = WeekSchedulePagerAdapter(this)
         }
 
         scheduleViewPager.pageMargin = dpToPx(1)
@@ -78,32 +64,29 @@ class HanzeSchedule : AppCompatActivity() {
     }
 
     fun logIn(username: String, password: String) {
-        digirooster.logIn(username, password) { response ->
+        Session.digirooster?.logIn(username, password) { response ->
             selectSchedule("99030BAD69623C854AA2CF1AB103A3C7", Digirooster.Resource.CLASS)
         }
     }
 
     fun selectSchedule(resource: String, resourceType: Digirooster.Resource) {
-        digirooster.getSchedule(resource, resourceType) { schedule ->
-            activeSchedule = schedule
-            scheduleViewPager.adapter = SchedulePagerAdapter(this)
-            scheduleViewPager.pageMargin = 0
+        Session.digirooster?.getSchedule(resource, resourceType) { schedule ->
+            Session.activeSchedule = schedule
+            scheduleViewPager.adapter = WeekSchedulePagerAdapter(this)
+
+            // Show the week containing the next event
+            val currentTime = System.currentTimeMillis()
+            val nextEvent = schedule.events.find { it.start.timeInMillis > currentTime }!!
+            val week = schedule.weeks.find { (it.start..it.end).contains(nextEvent.start) }!!
+            scheduleViewPager.currentItem = week.index
         }
     }
 
-    fun showDaySchedule(week: Schedule.Week) {
-        scheduleViewPager.adapter = DaySchedulePagerAdapter(week, this)
-        tab_layout.tabMode = TabLayout.MODE_FIXED
-    }
-
-    class DataFragment : Fragment() {
-        lateinit var digirooster: Digirooster
-        var activeSchedule: Schedule? = null
-
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            retainInstance = true
-        }
+    fun showDaySchedule(week: Schedule.Week, day: Int = 1) {
+        val intent = Intent(this, DayScheduleActivity::class.java)
+        intent.putExtra("weekIndex", week.index)
+        intent.putExtra("day", day)
+        startActivity(intent)
     }
 
     class LoginCredentialsDialog : DialogFragment() {

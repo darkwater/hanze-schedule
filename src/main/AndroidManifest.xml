@@ -14,7 +14,7 @@
             android:icon="@drawable/ic_launcher">
 
         <activity
-                android:name="HanzeSchedule"
+                android:name="WeekScheduleActivity"
                 android:label="@string/app_name"
                 android:theme="@style/Theme.HanzeSchedule">
 
@@ -26,6 +26,11 @@
             </intent-filter>
 
         </activity>
+
+        <activity
+                android:name="DayScheduleActivity"
+                android:label="@string/app_name"
+                android:theme="@style/Theme.HanzeSchedule" />
 
     </application>
 

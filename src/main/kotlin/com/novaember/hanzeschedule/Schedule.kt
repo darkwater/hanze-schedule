@@ -1,14 +1,13 @@
 package com.novaember.hanzeschedule
 
 import java.util.Calendar
-import java.util.Date
 
 import org.json.JSONArray
 import org.json.JSONObject
 
 class Schedule(json: JSONObject) {
-    val start = Date(json.getLong("ScheduleStart"))
-    val end   = Date(json.getLong("ScheduleEnd"))
+    val start = json.getLong("ScheduleStart").toCalendar()
+    val end   = json.getLong("ScheduleEnd").toCalendar()
     val id    = json.getString("ScheduleId")
 
     val changes = json.getJSONArray("ChangeData")
@@ -16,42 +15,41 @@ class Schedule(json: JSONObject) {
     // Let's hope events and weeks are already properly sorted. Apparently sorting them here is a pain.
 
     val events = (0 until json.getJSONArray("ActivityData").length())
-    .map { Event(json.getJSONArray("ActivityData").getJSONObject(it)) }
+    .map { Event(it, json.getJSONArray("ActivityData").getJSONObject(it)) }
 
     val weeks = (0 until json.getJSONArray("WeekData").length())
-    .map { Week(json.getJSONArray("WeekData").getJSONObject(it)) }
+    .map { Week(it, json.getJSONArray("WeekData").getJSONObject(it)) }
 
 
-    class Event(json: JSONObject) {
+    class Event(val index: Int, json: JSONObject) {
         val id          = json.getString("ID")
         val description = json.getString("Description")
         val location    = json.getString("Location")
         val staff       = json.getString("Staff")
         val student     = json.getString("Student")
-        val start       = Date(json.getLong("Start"))
-        val end         = Date(json.getLong("End"))
+        val start       = json.getLong("Start").toCalendar()
+        val end         = json.getLong("End").toCalendar()
         val week        = json.getInt("Week")
         val width       = json.getInt("Width")
         val left        = json.getInt("Left")
 
-        val dayOfWeek = start.day
+        val dayOfWeek = start.get(Calendar.DAY_OF_WEEK) - 1
         val duration  = end.hourFloat() - start.hourFloat()
 
         val shortDesc = description.substringAfter('/').take(3)
         val color     = location.toColor()
     }
 
-    class Week(json: JSONObject) {
+    class Week(val index: Int, json: JSONObject) {
         val number = json.getInt("WeekNumber")
-        val start  = Date(json.getLong("WeekStart"))
-        val end    = Date(json.getLong("WeekEnd"))
+        val start  = json.getLong("WeekStart").toCalendar()
+        val end    = json.getLong("WeekEnd").toCalendar()
 
         // Get the dates for this week (at 0:00)
-        private val calendar = Calendar.getInstance()
-        val days = (0 until 6).map {
-            calendar.time = start
-            calendar.add(Calendar.DATE, it)
-            calendar.time
+        val days = (Calendar.MONDAY..Calendar.SATURDAY).map {
+            val calendar = start.clone() as Calendar
+            calendar.set(Calendar.DAY_OF_WEEK, it)
+            calendar
         }
     }
 }
