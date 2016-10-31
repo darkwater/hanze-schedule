@@ -22,9 +22,9 @@ class DayScheduleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_dayschedule)
         setSupportActionBar(toolbar)
 
-        val weekIndex = intent.getIntExtra("weekIndex", 0)
-        val day = intent.getIntExtra("day", 1)
-        scheduleViewPager.adapter = DaySchedulePagerAdapter(Session.activeSchedule!!.weeks[weekIndex], this)
-        scheduleViewPager.currentItem = day - 1
+        val weekNumber = intent.getIntExtra("weekNumber", 0)
+        val day = intent.getIntExtra("day", 0)
+        scheduleViewPager.adapter = DaySchedulePagerAdapter(Session.activeSchedule!!.getWeek(weekNumber), this)
+        scheduleViewPager.currentItem = day
     }
 }

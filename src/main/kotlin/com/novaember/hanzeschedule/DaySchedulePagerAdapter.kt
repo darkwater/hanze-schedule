@@ -20,7 +20,7 @@ import java.util.Calendar
 import kotlinx.android.synthetic.main.fragment_dayschedule.view.*
 import kotlinx.android.synthetic.main.fragment_dayschedule_item.view.*
 
-class DaySchedulePagerAdapter(val week: Schedule.Week, val activity: DayScheduleActivity) : FragmentStatePagerAdapter(activity.supportFragmentManager) {
+class DaySchedulePagerAdapter(val week: Week, val activity: DayScheduleActivity) : FragmentStatePagerAdapter(activity.supportFragmentManager) {
     override fun getCount(): Int {
         return 5
     }

@@ -27,11 +27,6 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
         CookieHandler.setDefault(CookieManager())
     }
 
-    enum class Resource(val value: String) {
-        STAFF("1"),
-        CLASS("2")
-    }
-
     fun logIn(username: String, password: String, callback: (Boolean) -> Unit) {
         val successListener = object : Response.Listener<String> {
             override fun onResponse(response: String) {
@@ -62,10 +57,10 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
         queue.add(stringRequest)
     }
 
-    fun getSchedule(resourceId: String, resource: Resource, callback: (Schedule) -> Unit) {
+    fun getResourceSchedule(resourceId: String, resourceType: Resource.Type, callback: (ResourceSchedule) -> Unit) {
         val successListener = object : Response.Listener<JSONObject> {
             override fun onResponse(response: JSONObject) {
-                callback(Schedule(JSONObject(response.getString("d"))))
+                callback(ResourceSchedule(JSONObject(response.getString("d"))))
             }
         }
 
@@ -79,7 +74,7 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
 
         val requestBody = JSONObject()
         requestBody.put("ResourceID", resourceId)
-        requestBody.put("Resource", resource.value)
+        requestBody.put("Resource", resourceType.value)
 
         val stringRequest = JsonObjectRequest(Request.Method.POST,
         baseUrl + "/website/AjaxService.asmx/GetSchedule", requestBody, successListener, errorListener)

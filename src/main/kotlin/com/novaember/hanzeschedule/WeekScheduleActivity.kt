@@ -65,26 +65,26 @@ class WeekScheduleActivity : AppCompatActivity() {
 
     fun logIn(username: String, password: String) {
         Session.digirooster?.logIn(username, password) { response ->
-            selectSchedule("99030BAD69623C854AA2CF1AB103A3C7", Digirooster.Resource.CLASS)
+            Resource("99030BAD69623C854AA2CF1AB103A3C7", Resource.Type.CLASS).getSchedule { classSchedule ->
+                Resource("DIRN", Resource.Type.STAFF).getSchedule { staffSchedule ->
+                    val schedule = Schedule(setOf(classSchedule, staffSchedule))
+                    Session.activeSchedule = schedule
+
+                    val weekSchedulePagerAdapter = WeekSchedulePagerAdapter(this)
+                    scheduleViewPager.adapter = weekSchedulePagerAdapter
+
+                    // Show the week containing the next event
+                    val currentTime = System.currentTimeMillis()
+                    val nextEvent = schedule.events.find { it.start.timeInMillis > currentTime }!!
+                    scheduleViewPager.currentItem = weekSchedulePagerAdapter.getWeekIndex(nextEvent.week)
+                }
+            }
         }
     }
 
-    fun selectSchedule(resource: String, resourceType: Digirooster.Resource) {
-        Session.digirooster?.getSchedule(resource, resourceType) { schedule ->
-            Session.activeSchedule = schedule
-            scheduleViewPager.adapter = WeekSchedulePagerAdapter(this)
-
-            // Show the week containing the next event
-            val currentTime = System.currentTimeMillis()
-            val nextEvent = schedule.events.find { it.start.timeInMillis > currentTime }!!
-            val week = schedule.weeks.find { (it.start..it.end).contains(nextEvent.start) }!!
-            scheduleViewPager.currentItem = week.index
-        }
-    }
-
-    fun showDaySchedule(week: Schedule.Week, day: Int = 1) {
+    fun showDaySchedule(week: Week, day: Int = 1) {
         val intent = Intent(this, DayScheduleActivity::class.java)
-        intent.putExtra("weekIndex", week.index)
+        intent.putExtra("weekNumber", week.number)
         intent.putExtra("day", day)
         startActivity(intent)
     }

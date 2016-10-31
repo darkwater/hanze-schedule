@@ -31,7 +31,7 @@ class DayScheduleFragment() : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val week = Session.activeSchedule!!.weeks.find { it.number == arguments.getInt("weekNumber") }!!
+        val week = Session.activeSchedule!!.getWeek(arguments.getInt("weekNumber"))
         day = week.days[arguments.getInt("day")]
         nextDay = week.days[arguments.getInt("day") + 1]
     }

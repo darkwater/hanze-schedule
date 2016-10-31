@@ -13,20 +13,26 @@ import android.widget.RelativeLayout.LayoutParams
 import android.widget.TextView
 
 class WeekSchedulePagerAdapter(val activity: WeekScheduleActivity) : FragmentStatePagerAdapter(activity.supportFragmentManager) {
+    val weeks = Session.activeSchedule!!.weeks.toList()
+
     override fun getCount(): Int {
-        return Session.activeSchedule?.weeks?.size ?: 0
+        return weeks.size
     }
 
     override fun getItem(weekIndex: Int): Fragment {
         val fragment = WeekScheduleFragment()
         val bundle = Bundle()
-        bundle.putInt("weekIndex", weekIndex)
+        bundle.putInt("weekNumber", weeks[weekIndex].number)
         fragment.setArguments(bundle)
 
         return fragment
     }
 
     override fun getPageTitle(weekIndex: Int): String {
-        return Session.activeSchedule!!.weeks[weekIndex].number.toString()
+        return weeks[weekIndex].number.toString()
+    }
+
+    fun getWeekIndex(weekNumber: Int): Int {
+        return weeks.indexOfFirst { it.number == weekNumber }
     }
 }
