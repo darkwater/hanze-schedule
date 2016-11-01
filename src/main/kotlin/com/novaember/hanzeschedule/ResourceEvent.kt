@@ -4,19 +4,19 @@ import java.util.Calendar
 
 import org.json.JSONObject
 
-class ResourceEvent(json: JSONObject) {
-    val id          = json.getString("ID")
-    val description = json.getString("Description")
-    val location    = json.getString("Location")
-    val staff       = json.getString("Staff")
-    val student     = json.getString("Student")
-    val start       = json.getLong("Start").toCalendar()
-    val end         = json.getLong("End").toCalendar()
-    val week        = json.getInt("Week")
+class ResourceEvent(json: JSONObject) : Event {
+    override val id          = json.getString("ID")
+    override val description = json.getString("Description")
+    override val location    = json.getString("Location")
+    override val staff       = json.getString("Staff")
+    override val student     = json.getString("Student")
+    override val start       = json.getLong("Start").toCalendar()
+    override val end         = json.getLong("End").toCalendar()
+    override val week        = json.getInt("Week")
 
-    val dayOfWeek = (Calendar.MONDAY..Calendar.FRIDAY).indexOf(start.get(Calendar.DAY_OF_WEEK))
-    val duration  = end.hourFloat() - start.hourFloat()
+    override val dayOfWeek = (Calendar.MONDAY..Calendar.FRIDAY).indexOf(start.get(Calendar.DAY_OF_WEEK))
+    override val duration  = end.hourFloat() - start.hourFloat()
 
-    val shortDesc = description.substringAfter('/').take(3)
-    val color     = location.toColor()
+    override val shortDesc = description.substringAfter('/').take(3)
+    override val color     = location.toColor()
 }

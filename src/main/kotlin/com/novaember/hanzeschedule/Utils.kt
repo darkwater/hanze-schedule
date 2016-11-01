@@ -34,16 +34,7 @@ fun Long.toCalendar(): Calendar {
 
 fun Calendar.hourFloat(): Float {
     return get(Calendar.HOUR_OF_DAY).toFloat() + get(Calendar.MINUTE).toFloat() / 60
-    return ((timeInMillis - timeZone.rawOffset).toDouble() / (3600 * 1000) % 24).toFloat()
-}
 
-fun List<List<Week>>.mergeWeeks(): List<Week> {
-    return fold(listOf<Week>()) { acc, next -> acc.mergeWith(next) }
-}
-
-fun List<Week>.mergeWith(other: List<Week>): List<Week> {
-    val itA = 0
-    val itB = 0
-
-    return this
+    // TODO: use this instead
+    // return ((timeInMillis - timeZone.rawOffset).toDouble() / (3600 * 1000) % 24).toFloat()
 }

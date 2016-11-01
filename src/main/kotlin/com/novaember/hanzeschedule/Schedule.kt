@@ -7,7 +7,7 @@ import kotlin.collections.Set
 import org.json.JSONArray
 import org.json.JSONObject
 
-class Schedule(schedules: Set<ResourceSchedule>) {
+class Schedule(val schedules: Set<FilteredScheduleSource>) {
     val events = schedules.map { it.events }.flatten().toSet().sortedBy { it.start }
     val weeks  = schedules.map { it.weeks  }.flatten().toSet().sortedBy { it.start }
 
@@ -16,11 +16,11 @@ class Schedule(schedules: Set<ResourceSchedule>) {
         return weeks.find { it.number == weekNumber }!!
     }
 
-    fun eventsInWeek(weekNumber: Int): List<ResourceEvent> {
-        return events.filter { it.week == weekNumber }
+    fun eventsInWeek(weekNumber: Int): Set<Event> {
+        return events.filter { it.week == weekNumber }.toSet()
     }
 
-    fun eventsInWeek(week: Week): List<ResourceEvent> {
+    fun eventsInWeek(week: Week): Set<Event> {
         return eventsInWeek(week.number)
     }
 }

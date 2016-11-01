@@ -67,7 +67,9 @@ class WeekScheduleActivity : AppCompatActivity() {
         Session.digirooster?.logIn(username, password) { response ->
             Resource("99030BAD69623C854AA2CF1AB103A3C7", Resource.Type.CLASS).getSchedule { classSchedule ->
                 Resource("DIRN", Resource.Type.STAFF).getSchedule { staffSchedule ->
-                    val schedule = Schedule(setOf(classSchedule, staffSchedule))
+                    val classScheduleFiltered = FilteredScheduleSource(classSchedule, setOf(ExclusiveEventFilter()))
+                    val staffScheduleFiltered = FilteredScheduleSource(staffSchedule, setOf(SelectiveEventFilter()))
+                    val schedule = Schedule(setOf(classScheduleFiltered, staffScheduleFiltered))
                     Session.activeSchedule = schedule
 
                     val weekSchedulePagerAdapter = WeekSchedulePagerAdapter(this)
