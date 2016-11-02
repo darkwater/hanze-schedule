@@ -39,7 +39,7 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
         val onError = object : Response.ErrorListener {
             override fun onErrorResponse(error: VolleyError) {
                 Log.e("HanzeSchedule", "Something went wrong during login", error)
-                Log.e("HanzeSchedule", error.networkResponse.data.toString(StandardCharsets.UTF_8))
+                // Log.e("HanzeSchedule", error.networkResponse.data.toString(StandardCharsets.UTF_8))
                 callback(false)
             }
         }

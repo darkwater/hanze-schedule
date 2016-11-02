@@ -3,6 +3,7 @@ package com.novaember.hanzeschedule
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,7 +11,11 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : Activity() {
-    val loading: Boolean = false
+    var loading: Boolean = false
+        set(value) {
+            field = value
+            loading_overlay.visibility = if(value) View.VISIBLE else View.INVISIBLE
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,7 +24,15 @@ class LoginActivity : Activity() {
         val digirooster = Session.digirooster ?: Digirooster(this)
         if (Session.digirooster == null) Session.digirooster = digirooster
 
+        forgot_password_button.setOnClickListener { view ->
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://password.hanze.nl/"))
+            startActivity(browserIntent)
+        }
+
         login_button.setOnClickListener { view ->
+            loading = true
+            login_button.setEnabled(false)
+
             val username = username_input.text.toString()
             val password = password_input.text.toString()
 
@@ -38,6 +51,9 @@ class LoginActivity : Activity() {
                 } else {
                     error_message.text = getString(R.string.login_error_generic)
                     error_message.visibility = View.VISIBLE
+
+                    loading = false
+                    login_button.setEnabled(true)
                 }
             }
         }
