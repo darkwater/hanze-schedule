@@ -20,6 +20,7 @@ import org.json.JSONObject
 
 class Digirooster(val context: Context, val baseUrl: String = "https://digirooster.hanze.nl") {
     var queue: RequestQueue
+    var loggedIn: Boolean = false
 
     init {
         queue = Volley.newRequestQueue(context)
@@ -28,22 +29,23 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
     }
 
     fun logIn(username: String, password: String, callback: (Boolean) -> Unit) {
-        val successListener = object : Response.Listener<String> {
+        val onSuccess = object : Response.Listener<String> {
             override fun onResponse(response: String) {
+                loggedIn = true
                 callback(true)
             }
         }
 
-        val errorListener = object : Response.ErrorListener {
+        val onError = object : Response.ErrorListener {
             override fun onErrorResponse(error: VolleyError) {
                 Log.e("HanzeSchedule", "Something went wrong during login", error)
-                // Log.e("HanzeSchedule", error.networkResponse.data.toString(StandardCharsets.UTF_8))
+                Log.e("HanzeSchedule", error.networkResponse.data.toString(StandardCharsets.UTF_8))
                 callback(false)
             }
         }
 
-        val stringRequest = object : StringRequest(Request.Method.POST,
-        baseUrl + "/CookieAuth.dll?Logon", successListener, errorListener) {
+        val url = baseUrl + "/CookieAuth.dll?Logon"
+        val stringRequest = object : StringRequest(Request.Method.POST, url, onSuccess, onError) {
             override fun getParams(): HashMap<String, String> {
                 return hashMapOf(
                         "curl" to "Z2FwebsiteZ2F",

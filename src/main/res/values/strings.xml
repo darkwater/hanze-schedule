@@ -3,13 +3,20 @@
 
     <string name="app_name">Hanze Schedule</string>
 
+    <string name="login_header">Log in</string>
+    <string name="login_body">
+        Please enter the credentials you use to log in to Digirooster.
+    </string>
+
+    <string name="login_error_generic">
+        Something went wrong. Double-check your username and password.
+        You might have no internet, or something else could\'ve fucked up. Yay, beta!
+    </string>
+
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="forgot_password">Forgot password?</string>
     <string name="log_in">Log in</string>
     <string name="quit">Quit</string>
-
-    <string name="login_body">
-        Please use the credentials you use to log in to Digirooster.
-    </string>
 
 </resources>

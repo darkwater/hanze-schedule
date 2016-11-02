@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#e82802</color>
-    <color name="colorPrimaryDark">#b01e02</color>
-    <color name="colorAccent">#00afff</color>
+    <color name="primary">#ee6600</color>
+    <color name="primary_dark">#a14500</color>
+    <color name="primary_light">#ff7c19</color>
+    <color name="accent">#0090a1</color>
+
+    <color name="text_dark">#dd000000</color>
+    <color name="text_light">#efffffff</color>
+    <color name="text_error">#efee110a</color>
 
     <color name="weekschedule_background">#e0e0e0</color>
     <color name="weekschedule_lines">#a0a0a0</color>
