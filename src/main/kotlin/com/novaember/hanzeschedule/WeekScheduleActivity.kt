@@ -60,24 +60,24 @@ class WeekScheduleActivity : AppCompatActivity() {
     }
 
     fun showSchedule() {
-        Resource("99030BAD69623C854AA2CF1AB103A3C7", Resource.Type.CLASS).getSchedule { classSchedule ->
-            Resource("DIRN", Resource.Type.STAFF).getSchedule { staffSchedule ->
-                val classScheduleFiltered = FilteredScheduleSource(classSchedule, setOf(ExclusiveEventFilter()))
-                val staffScheduleFiltered = FilteredScheduleSource(staffSchedule, setOf(SelectiveEventFilter()))
-                val schedule = Schedule(setOf(classScheduleFiltered, staffScheduleFiltered))
-                Session.activeSchedule = schedule
+        if (PreferenceManager(this).getResources().size == 0) {
+            val intent = Intent(this, ScheduleEditActivity::class.java)
+            startActivity(intent)
+        }
 
-                val weekSchedulePagerAdapter = WeekSchedulePagerAdapter(this)
+        PreferenceManager(this).getSchedule { schedule ->
+            Session.activeSchedule = schedule
 
-                scheduleViewPager.adapter = weekSchedulePagerAdapter
-                scheduleViewPager.pageMargin = dpToPx(1)
-                scheduleViewPager.setPageMarginDrawable(ColorDrawable(resources.getColor(R.color.weekschedule_lines, null)))
+            val weekSchedulePagerAdapter = WeekSchedulePagerAdapter(this)
 
-                // Show the week containing the next event
-                val currentTime = System.currentTimeMillis()
-                val nextEvent = schedule.events.find { it.start.timeInMillis > currentTime }!!
-                scheduleViewPager.currentItem = weekSchedulePagerAdapter.getWeekIndex(nextEvent.week)
-            }
+            scheduleViewPager.adapter = weekSchedulePagerAdapter
+            scheduleViewPager.pageMargin = dpToPx(1)
+            scheduleViewPager.setPageMarginDrawable(ColorDrawable(resources.getColor(R.color.weekschedule_lines, null)))
+
+            // Show the week containing the next event
+            val currentTime = System.currentTimeMillis()
+            val nextEvent = schedule.events.find { it.start.timeInMillis > currentTime }!!
+            scheduleViewPager.currentItem = weekSchedulePagerAdapter.getWeekIndex(nextEvent.weekNumber)
         }
     }
 

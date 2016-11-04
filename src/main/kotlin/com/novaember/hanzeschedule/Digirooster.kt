@@ -59,29 +59,47 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
         queue.add(stringRequest)
     }
 
-    fun getResourceSchedule(resourceId: String, resourceType: Resource.Type, callback: (ResourceSchedule) -> Unit) {
+    fun ajaxService(action: String, requestBody: JSONObject, callback: (JSONObject) -> Unit) {
         val successListener = object : Response.Listener<JSONObject> {
             override fun onResponse(response: JSONObject) {
-                callback(ResourceSchedule(JSONObject(response.getString("d"))))
+                callback(JSONObject(response.getString("d")))
             }
         }
 
         val errorListener = object : Response.ErrorListener {
             override fun onErrorResponse(error: VolleyError) {
-                Log.e("HanzeSchedule", "Something went wrong during GetSchedule", error)
+                Log.e("HanzeSchedule", "Something went wrong during $action", error)
                 // Log.e("HanzeSchedule", error.networkResponse.data.toString(StandardCharsets.UTF_8))
                 // callback(null)
             }
         }
 
-        val requestBody = JSONObject()
-        requestBody.put("ResourceID", resourceId)
-        requestBody.put("Resource", resourceType.value)
-
-        val stringRequest = JsonObjectRequest(Request.Method.POST,
-        baseUrl + "/website/AjaxService.asmx/GetSchedule", requestBody, successListener, errorListener)
+        val request = JsonObjectRequest(Request.Method.POST, baseUrl + "/website/AjaxService.asmx/$action",
+        requestBody, successListener, errorListener)
 
         // Add the request to the RequestQueue.
-        queue.add(stringRequest)
+        queue.add(request)
+    }
+
+    fun getResourceSchedule(resourceId: String, resourceType: Resource.Type, callback: (ResourceSchedule) -> Unit) {
+        val requestBody = JSONObject(mapOf(
+                "ResourceID" to resourceId,
+                "Resource"   to  resourceType.value
+        ))
+
+        ajaxService("GetSchedule", requestBody) { response ->
+            callback(ResourceSchedule(response))
+        }
+    }
+
+    fun searchStaff(searchString: String, count: Int, callback: (JSONObject) -> Unit) {
+        val requestBody = JSONObject(mapOf(
+                "SearchString" to searchString,
+                "Count"        to count.toString()
+        ))
+
+        ajaxService("SearchStaff", requestBody) { response ->
+            callback(response)
+        }
     }
 }

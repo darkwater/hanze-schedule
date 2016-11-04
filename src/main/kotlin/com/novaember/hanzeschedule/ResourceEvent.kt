@@ -12,7 +12,7 @@ class ResourceEvent(json: JSONObject) : Event {
     override val student     = json.getString("Student")
     override val start       = json.getLong("Start").toCalendar()
     override val end         = json.getLong("End").toCalendar()
-    override val week        = json.getInt("Week")
+    override val weekNumber  = json.getInt("Week")
 
     override val dayOfWeek = (Calendar.MONDAY..Calendar.FRIDAY).indexOf(start.get(Calendar.DAY_OF_WEEK))
     override val duration  = end.hourFloat() - start.hourFloat()

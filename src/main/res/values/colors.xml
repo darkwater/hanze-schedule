@@ -10,6 +10,8 @@
     <color name="text_light">#efffffff</color>
     <color name="text_error">#efee110a</color>
 
+    <color name="separator">#e0e0e0</color>
+
     <color name="weekschedule_background">#e0e0e0</color>
     <color name="weekschedule_lines">#a0a0a0</color>
 

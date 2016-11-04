@@ -19,4 +19,8 @@
     <string name="log_in">Log in</string>
     <string name="quit">Quit</string>
 
+    <string name="scheduleedit_add_new">Add new schedule</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

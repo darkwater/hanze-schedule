@@ -10,7 +10,7 @@ interface Event {
     val student: String
     val start: Calendar
     val end: Calendar
-    val week: Int
+    val weekNumber: Int
 
     val dayOfWeek: Int
     val duration: Float

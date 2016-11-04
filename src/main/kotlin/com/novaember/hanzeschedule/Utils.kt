@@ -8,6 +8,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 
+import org.json.JSONArray
+import org.json.JSONObject
+
 fun Context.dpToPx(dp: Float): Int {
     return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
 }
@@ -37,4 +40,10 @@ fun Calendar.hourFloat(): Float {
 
     // TODO: use this instead
     // return ((timeInMillis - timeZone.rawOffset).toDouble() / (3600 * 1000) % 24).toFloat()
+}
+
+fun Iterable<JSONObject>.toJSONArray(): JSONArray {
+    val arr = JSONArray()
+    this.forEach { arr.put(it) }
+    return arr
 }

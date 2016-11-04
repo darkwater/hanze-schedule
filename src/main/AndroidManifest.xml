@@ -14,11 +14,6 @@
             android:icon="@drawable/ic_launcher">
 
         <activity
-                android:name="LoginActivity"
-                android:label="@string/app_name"
-                android:theme="@style/Theme.HanzeSchedule" />
-
-        <activity
                 android:name="WeekScheduleActivity"
                 android:label="@string/app_name"
                 android:theme="@style/Theme.HanzeSchedule">
@@ -34,6 +29,16 @@
 
         <activity
                 android:name="DayScheduleActivity"
+                android:label="@string/app_name"
+                android:theme="@style/Theme.HanzeSchedule" />
+
+        <activity
+                android:name="LoginActivity"
+                android:label="@string/app_name"
+                android:theme="@style/Theme.HanzeSchedule" />
+
+        <activity
+                android:name="ScheduleEditActivity"
                 android:label="@string/app_name"
                 android:theme="@style/Theme.HanzeSchedule" />
 
