@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets
 import java.util.HashMap
 
 import org.json.JSONObject
+import org.json.JSONArray
 
 class Digirooster(val context: Context, val baseUrl: String = "https://digirooster.hanze.nl") {
     var queue: RequestQueue
@@ -59,10 +60,10 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
         queue.add(stringRequest)
     }
 
-    fun ajaxService(action: String, requestBody: JSONObject, callback: (JSONObject) -> Unit) {
+    fun ajaxService(action: String, requestBody: JSONObject?, callback: (String) -> Unit) {
         val successListener = object : Response.Listener<JSONObject> {
             override fun onResponse(response: JSONObject) {
-                callback(JSONObject(response.getString("d")))
+                callback(response.getString("d"))
             }
         }
 
@@ -88,18 +89,39 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
         ))
 
         ajaxService("GetSchedule", requestBody) { response ->
-            callback(ResourceSchedule(response))
+            callback(ResourceSchedule(JSONObject(response)))
         }
     }
 
-    fun searchStaff(searchString: String, count: Int, callback: (JSONObject) -> Unit) {
+    fun searchStaff(searchString: String, count: Int, callback: (List<Resource>) -> Unit) {
         val requestBody = JSONObject(mapOf(
                 "SearchString" to searchString,
                 "Count"        to count.toString()
         ))
 
         ajaxService("SearchStaff", requestBody) { response ->
-            callback(response)
+            callback(JSONObject(response).toStringStringPairList().map {
+                Resource(it.first, Resource.Type.STAFF, it.second)
+            })
+        }
+    }
+
+    fun getSchools(callback: (List<School>) -> Unit) {
+        ajaxService("GetSchools", JSONObject()) { response ->
+            callback(JSONArray(response).toJSONObjectList().map { School(it) })
+        }
+    }
+
+    fun getClasses(school: School, year: Int, callback: (List<Resource>) -> Unit) {
+        val requestBody = JSONObject(mapOf(
+                "SchoolID"  to school.id,
+                "StudyYear" to year
+        ))
+
+        ajaxService("GetGroups", requestBody) { response ->
+            callback(JSONObject(response).toStringStringPairList().map {
+                Resource(it.first, Resource.Type.CLASS, it.second)
+            })
         }
     }
 }

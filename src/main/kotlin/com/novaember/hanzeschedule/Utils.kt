@@ -47,3 +47,13 @@ fun Iterable<JSONObject>.toJSONArray(): JSONArray {
     this.forEach { arr.put(it) }
     return arr
 }
+
+fun JSONArray.toJSONObjectList(): List<JSONObject> {
+    return (0 until length()).map { getJSONObject(it) }
+}
+
+fun JSONObject.toStringStringPairList(): List<Pair<String, String>> {
+    return keys().asSequence().map { key ->
+        key to getString(key)
+    }.toList()
+}

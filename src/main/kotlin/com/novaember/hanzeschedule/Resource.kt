@@ -1,6 +1,6 @@
 package com.novaember.hanzeschedule
 
-class Resource(val id: String, val type: Resource.Type, val label: String) {
+data class Resource(val id: String, val type: Resource.Type, val label: String) {
     enum class Type(val value: String) {
         STAFF("1"),
         CLASS("2")
@@ -9,4 +9,6 @@ class Resource(val id: String, val type: Resource.Type, val label: String) {
     fun fetchSchedule(callback: (ResourceSchedule) -> Unit) {
         Session.digirooster!!.getResourceSchedule(id, type, callback)
     }
+
+    override fun toString() = label
 }

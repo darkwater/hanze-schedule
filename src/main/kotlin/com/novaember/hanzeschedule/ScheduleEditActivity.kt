@@ -1,5 +1,6 @@
 package com.novaember.hanzeschedule
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -11,7 +12,16 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Adapter
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.BaseAdapter
+import android.widget.Spinner
+import android.widget.SpinnerAdapter
+import android.widget.TextView
 
 import kotlinx.android.synthetic.main.activity_scheduleedit.*
 import kotlinx.android.synthetic.main.dialog_scheduleadd.view.*
@@ -58,32 +68,60 @@ class ScheduleEditActivity : AppCompatActivity() {
     }
 
     class ScheduleAddDialog(val scheduleEditActivity: ScheduleEditActivity) : DialogFragment() {
+        var selectedYear = 0
+
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             val builder = AlertDialog.Builder(activity)
             val inflater = activity.layoutInflater
             val view = inflater.inflate(R.layout.dialog_scheduleadd, null)
 
-            view.staff_input.setFilters(arrayOf(InputFilter.AllCaps()))
+            // Class input
+            Session.digirooster?.getSchools { schools ->
+                view.school_spinner.adapter = ArrayAdapter(scheduleEditActivity, R.layout.scheduleedit_school, schools)
+            }
 
-            val textWatcher = object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-                override fun afterTextChanged(s: Editable) {}
+            fun updateClassSpinner() {
+                val school = view.school_spinner.selectedItem as School
 
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                    Session.digirooster?.searchStaff(s.toString(), 10) { response ->
-                        Handler().post {
-                            val staffAdapter = ArrayAdapter<String>(activity, R.layout.dropdown_item,
-                            response.keys().asSequence().map { key ->
-                                response.getString(key)
-                            }.toList())
+                Session.digirooster?.getClasses(school, selectedYear) { classes ->
+                    view.class_spinner.adapter = ArrayAdapter(scheduleEditActivity,
+                    R.layout.scheduleedit_school, classes)
+                }
+            }
 
-                            view.staff_input.setAdapter(staffAdapter)
-                            staffAdapter.notifyDataSetChanged()
-                        }
+            view.school_spinner.setOnItemSelectedListener( object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(spinner: AdapterView<out Adapter>, item: View, position: Int, id: Long) {
+                    if (selectedYear != 0) updateClassSpinner()
+                }
+
+                override fun onNothingSelected(spinner: AdapterView<out Adapter>) {}
+            })
+
+
+            setOf(view.school_year1, view.school_year2, view.school_year3, view.school_year4).forEachIndexed { index, button ->
+                button.setOnClickListener {
+                    val year = index + 1
+                    if (selectedYear != year) {
+                        selectedYear = year
+
+                        updateClassSpinner()
                     }
                 }
             }
-            view.staff_input.addTextChangedListener(textWatcher)
+
+            view.class_add.setOnClickListener {
+                val resource = view.class_spinner.selectedItem as Resource
+                scheduleEditActivity.addResourceView(resource)
+
+                scheduleEditActivity.resources.add(Pair(resource, setOf<EventFilter>()))
+                PreferenceManager(scheduleEditActivity).putResources(scheduleEditActivity.resources)
+
+                dismiss()
+            }
+
+            // Teacher input
+            view.staff_input.setFilters(arrayOf(InputFilter.AllCaps()))
+            view.staff_input.addTextChangedListener(StaffInputTextWatcher(activity, view.staff_input))
 
             builder.setView(view)
 
@@ -101,5 +139,19 @@ class ScheduleEditActivity : AppCompatActivity() {
             return builder.create()
         }
     }
-}
 
+    class StaffInputTextWatcher(val context: Context, val staff_input: AutoCompleteTextView) : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+        override fun afterTextChanged(s: Editable) {}
+
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            Session.digirooster?.searchStaff(s.toString(), 10) { response ->
+                Handler().post {
+                    val staffAdapter = ArrayAdapter(context, R.layout.dropdown_item, response)
+                    staff_input.setAdapter(staffAdapter)
+                    staffAdapter.notifyDataSetChanged()
+                }
+            }
+        }
+    }
+}
