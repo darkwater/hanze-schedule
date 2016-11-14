@@ -21,10 +21,20 @@ class DayScheduleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dayschedule)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
 
         val weekNumber = intent.getIntExtra("weekNumber", 0)
         val day = intent.getIntExtra("day", 0)
         scheduleViewPager.adapter = DaySchedulePagerAdapter(Session.activeSchedule!!.getWeek(weekNumber), this)
         scheduleViewPager.currentItem = day
+
+        setTitle("Week $weekNumber")
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+
+        return true
     }
 }
