@@ -134,8 +134,6 @@ class ScheduleEditActivity : AppCompatActivity() {
                 PreferenceManager(activity).putResources((activity as ScheduleEditActivity).resources)
             }
 
-            builder.setNegativeButton(R.string.cancel) { dialog, id -> }
-
             return builder.create()
         }
     }

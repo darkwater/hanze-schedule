@@ -50,6 +50,15 @@ class WeekScheduleActivity : AppCompatActivity() {
                 showLoginActivity()
             }
         }
+
+        navigation_drawer.setNavigationItemSelectedListener { item ->
+            if (item.itemId == R.id.edit_schedule) {
+                val intent = Intent(this, ScheduleEditActivity::class.java)
+                startActivity(intent)
+            }
+
+            true
+        }
     }
 
     fun showLoginActivity() {

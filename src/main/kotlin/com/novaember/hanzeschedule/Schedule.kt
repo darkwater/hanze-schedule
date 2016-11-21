@@ -8,6 +8,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 class Schedule(val schedules: Set<ScheduleSource>) {
+    constructor(schedule: ScheduleSource) : this(setOf(schedule))
+
     val events = schedules.map { it.events }.flatten().toSet().sortedBy { it.start }
     val weeks  = schedules.map { it.weeks  }.flatten().toSet().sortedBy { it.start }.filter { week ->
         events.any { event -> event.weekNumber == week.number }

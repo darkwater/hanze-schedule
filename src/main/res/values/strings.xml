@@ -26,4 +26,6 @@
     <string name="select_school">Select a school</string>
     <string name="select_class">Select a class</string>
 
+    <string name="navigate_edit_schedule">Edit schedule</string>
+
 </resources>
