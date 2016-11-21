@@ -32,11 +32,11 @@ android {
     buildToolsVersion '24.0.3'
 
     defaultConfig {
-        versionCode 1
-        versionName "0.1"
+        versionCode "git rev-list --count HEAD".execute().text as int
+        versionName "git describe --tags".execute().text[1..-2] // strip v and newline
     }
 
-    buildTypes {
-
+    applicationVariants.all { variant ->
+        variant.resValue "string", "version", "v" + variant.versionName + " (" + variant.versionCode + ")"
     }
 }
