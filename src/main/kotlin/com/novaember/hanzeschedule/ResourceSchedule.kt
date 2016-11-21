@@ -17,7 +17,7 @@ class ResourceSchedule(json: JSONObject) : ScheduleSource {
     // Let's hope events and weeks are already properly sorted. Apparently sorting them here is a pain.
 
     override val events = (0 until json.getJSONArray("ActivityData").length()).map {
-        ResourceEvent(json.getJSONArray("ActivityData").getJSONObject(it))
+        ResourceEvent(json.getJSONArray("ActivityData").getJSONObject(it), id.toColor())
     }.toSet()
 
     override val weeks = (0 until json.getJSONArray("WeekData").length()).map {

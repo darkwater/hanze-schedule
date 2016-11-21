@@ -61,6 +61,12 @@ class WeekScheduleActivity : AppCompatActivity() {
         }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+
+        showSchedule()
+    }
+
     fun showLoginActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME)

@@ -20,7 +20,7 @@ fun Context.dpToPx(dp: Int): Int {
 }
 
 fun String.toColor(): Int {
-    val hue = sumByDouble { it.toDouble() } * Math.PI * 1000 % 360
+    val hue = sumByDouble { it.toDouble() } * 2000 % 360
     return Color.HSVToColor(floatArrayOf(hue.toFloat(), 0.95f, 0.95f))
 }
 
