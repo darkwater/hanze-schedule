@@ -36,7 +36,38 @@ android {
         versionName "git describe --tags".execute().text[1..-2] // strip v and newline
     }
 
+    buildTypes
+    {
+        debug
+        {
+            applicationIdSuffix ".debug"
+        }
+    }
+
     applicationVariants.all { variant ->
         variant.resValue "string", "version", "v" + variant.versionName + " (" + variant.versionCode + ")"
+    }
+}
+
+task generateIcons {
+    doLast {
+        def dpiFactors = [
+            mdpi:   1.0,
+            hdpi:   1.5,
+            xhdpi:  2.0,
+            xxhdpi: 3.0
+        ]
+
+        [ "main", "debug" ].each { buildType ->
+            dpiFactors.each { spec, factor ->
+                def output = "src/$buildType/res/drawable-$spec/ic_launcher.png"
+                def dpi = 22.50 * factor
+                def sed = buildType == "main" ? 'n' : 's/#ee6600/#607d8b/'
+
+                [ "sh", "-c",
+                    "sed '$sed' assets/icon.svg | inkscape --export-png='$output' /dev/stdin --export-dpi=$dpi"
+                ].execute()
+            }
+        }
     }
 }
