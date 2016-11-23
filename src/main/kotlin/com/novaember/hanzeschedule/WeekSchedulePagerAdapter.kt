@@ -14,6 +14,7 @@ import android.widget.TextView
 
 class WeekSchedulePagerAdapter(val activity: WeekScheduleActivity) : FragmentStatePagerAdapter(activity.supportFragmentManager) {
     val weeks = Session.activeSchedule!!.weeks.toList()
+    val currentWeek = weeks.find { it.contains(System.currentTimeMillis().toCalendar()) }
 
     override fun getCount(): Int {
         return weeks.size
@@ -29,7 +30,14 @@ class WeekSchedulePagerAdapter(val activity: WeekScheduleActivity) : FragmentSta
     }
 
     override fun getPageTitle(weekIndex: Int): String {
-        return weeks[weekIndex].number.toString()
+        val week = weeks[weekIndex]
+        val weekNumber = week.number
+
+        if (week == currentWeek) {
+            return "($weekNumber)"
+        } else {
+            return "$weekNumber"
+        }
     }
 
     fun getWeekIndex(weekNumber: Int): Int {

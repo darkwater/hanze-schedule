@@ -1,5 +1,6 @@
 package com.novaember.hanzeschedule
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
@@ -12,7 +13,7 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout.LayoutParams
 import android.widget.TextView
 
-import java.util.Date
+import java.util.Calendar
 
 import kotlinx.android.synthetic.main.fragment_weekschedule.view.*
 import kotlinx.android.synthetic.main.fragment_weekschedule_hourmarker.view.*
@@ -55,8 +56,14 @@ class WeekScheduleFragment() : Fragment() {
         }
 
         // Set column header texts
+        val now = Calendar.getInstance()
         (0 until 5).forEach {
-            (view.column_headers.getChildAt(it + 1) as TextView).text = "${week.days[it].format("d MMM")}"
+            val textview = (view.column_headers.getChildAt(it + 1) as TextView)
+            textview.text = week.days[it].format("d MMM")
+
+            if (now > week.days[it] && now < week.days[it + 1]) {
+                textview.setTypeface(null, Typeface.BOLD)
+            }
         }
 
         // Populate the overview with events
