@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.TextView
+import android.view.View
 
 import com.android.volley.Response
 
@@ -93,6 +94,8 @@ class WeekScheduleActivity : AppCompatActivity() {
             val currentTime = System.currentTimeMillis()
             val nextEvent = schedule.events.find { it.start.timeInMillis > currentTime }!!
             scheduleViewPager.currentItem = weekSchedulePagerAdapter.getWeekIndex(nextEvent.weekNumber)
+
+            loading_indicator.setVisibility(View.GONE)
         }
     }
 
