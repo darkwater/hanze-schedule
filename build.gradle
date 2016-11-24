@@ -32,6 +32,8 @@ android {
     buildToolsVersion '24.0.3'
 
     defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 24
         versionCode "git rev-list --count HEAD".execute().text as int
         versionName "git describe --tags".execute().text[1..-2] // strip v and newline
     }
