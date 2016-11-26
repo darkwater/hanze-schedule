@@ -7,17 +7,19 @@ import java.util.Calendar
 import org.json.JSONArray
 import org.json.JSONObject
 
-class ResourceSchedule(json: JSONObject) : ScheduleSource {
+class ResourceSchedule(json: JSONObject) : Schedule {
     val start = json.getLong("ScheduleStart").toCalendar()
     val end   = json.getLong("ScheduleEnd").toCalendar()
     val id    = json.getString("ScheduleId")
 
     val changes = json.getJSONArray("ChangeData")
 
+    var color = id.toColor()
+
     // Let's hope events and weeks are already properly sorted. Apparently sorting them here is a pain.
 
     override val events = (0 until json.getJSONArray("ActivityData").length()).map {
-        ResourceEvent(json.getJSONArray("ActivityData").getJSONObject(it), id.toColor())
+        ResourceEvent(json.getJSONArray("ActivityData").getJSONObject(it), color)
     }.toSet()
 
     override val weeks = (0 until json.getJSONArray("WeekData").length()).map {

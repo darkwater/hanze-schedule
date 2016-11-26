@@ -1,20 +1,8 @@
 package com.novaember.hanzeschedule
 
-import java.util.Calendar
-
-import kotlin.collections.Set
-
-import org.json.JSONArray
-import org.json.JSONObject
-
-class Schedule(val schedules: Set<ScheduleSource>) {
-    constructor(schedule: ScheduleSource) : this(setOf(schedule))
-
-    val events = schedules.map { it.events }.flatten().toSet().sortedBy { it.start }
-    val weeks  = schedules.map { it.weeks  }.flatten().toSet().sortedBy { it.start }.filter { week ->
-        events.any { event -> event.weekNumber == week.number }
-    }
-
+interface Schedule {
+    val events: Set<Event>
+    val weeks: Set<Week>
 
     fun getWeek(weekNumber: Int): Week {
         return weeks.find { it.number == weekNumber }!!

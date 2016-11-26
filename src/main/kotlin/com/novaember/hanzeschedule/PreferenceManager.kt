@@ -67,18 +67,18 @@ class PreferenceManager(val context: Context) {
     }
 
     fun getSchedule(callback: (Schedule) -> Unit) {
-        val scheduleSources = mutableSetOf<FilteredScheduleSource>()
+        val schedules = mutableSetOf<FilteredSchedule>()
         val resources = getResources()
 
         resources.forEach { pair ->
             val (resource, filters) = pair
 
             resource.fetchSchedule { schedule ->
-                val filteredSchedule = FilteredScheduleSource(schedule, filters)
-                scheduleSources.add(filteredSchedule)
+                val filteredSchedule = FilteredSchedule(schedule, filters)
+                schedules.add(filteredSchedule)
 
-                if (scheduleSources.size == resources.size) {
-                    callback(Schedule(scheduleSources))
+                if (schedules.size == resources.size) {
+                    callback(CombinedSchedule(schedules))
                 }
             }
         }

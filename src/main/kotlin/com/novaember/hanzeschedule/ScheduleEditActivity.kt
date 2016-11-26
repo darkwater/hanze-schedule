@@ -66,6 +66,7 @@ class ScheduleEditActivity : AppCompatActivity() {
     fun addResourceView(resource: Resource, filters: Set<EventFilter> = setOf<EventFilter>()) {
         val view = layoutInflater.inflate(R.layout.scheduleedit_resource, null)
         view.label.text = resource.label
+        view.schedule_color.setBackgroundColor(resource.label.toColor())
 
         view.setOnClickListener { view ->
             schedule_list.removeView(view)

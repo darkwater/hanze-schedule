@@ -8,7 +8,7 @@ echo "Building $(git describe --tags)..."
 /opt/android-sdk/build-tools/24.0.3/zipalign -f -v -p 4 build/outputs/apk/hanze-schedule-release-unsigned.apk build/outputs/apk/hanze-schedule-release.apk
 /opt/android-sdk/build-tools/24.0.3/apksigner sign --ks hanze-schedule-release-key.jks build/outputs/apk/hanze-schedule-release.apk
 
-cp build/outputs/apk/hanze-schedule-release.apk .
+cp build/outputs/apk/hanze-schedule-release.apk hanze-schedule-release-$(git describe --tags).apk
 
 echo "done"
 echo
