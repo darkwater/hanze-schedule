@@ -20,8 +20,8 @@ import kotlinx.android.synthetic.main.activity_weekschedule.*
  * Displays a per-day schedule of a given week.
  *
  * Activity arguments:
- *     int weekNumber (required) Week number to show
- *     int day        (def. 0)   Jump to day index in 0..4
+ *     int weekNumber Week number to show
+ *     int day        Jump to day index in 0..4 (def. 0)
  *
  * @see DayScheduleViewPager
  * @see DayScheduleFragment
@@ -30,6 +30,8 @@ class DayScheduleActivity : AppCompatActivity() {
 
     /**
      * Initializes the activity.
+     *
+     * @param savedInstanceState Android stuff
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +57,7 @@ class DayScheduleActivity : AppCompatActivity() {
     /**
      * Closes this activity (go back) when pressing the Toolbar's home button.
      *
-     * @return always true
+     * @return Always true
      */
     override fun onSupportNavigateUp(): Boolean {
         finish()

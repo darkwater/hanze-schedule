@@ -34,6 +34,8 @@ class ScheduleEditActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scheduleedit)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
 
         // Initialize Digirooster API
         val digirooster = Session.digirooster ?: Digirooster(this)
@@ -159,5 +161,16 @@ class ScheduleEditActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    /**
+     * Closes this activity (go back) when pressing the Toolbar's home button.
+     *
+     * @return Always `true`
+     */
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+
+        return true
     }
 }

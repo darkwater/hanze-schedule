@@ -86,7 +86,7 @@ class WeekScheduleFragment() : Fragment() {
 
             // Add an onClick listener that links to the day schedule
             eventView.setOnClickListener({ view ->
-                (activity as WeekScheduleActivity).showDaySchedule(week, event.dayOfWeek)
+                (activity as WeekScheduleActivity).showDaySchedule(week.number, event.dayOfWeek)
             })
 
             column.addView(eventView)
