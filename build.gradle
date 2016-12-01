@@ -8,6 +8,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0'
+        classpath 'org.jetbrains.dokka:dokka-android-gradle-plugin:0.9.8'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -15,6 +16,7 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'org.jetbrains.dokka-android'
 
 repositories {
     jcenter()
@@ -49,6 +51,20 @@ android {
     applicationVariants.all { variant ->
         variant.resValue "string", "version", "v" + variant.versionName + " (" + variant.versionCode + ")"
     }
+}
+
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "$buildDir/javadoc"
+    // processConfigurations = ['compile', 'extra']
+    // includes = ['packages.md', 'extra.md']
+    // samples = ['samples/basic.kt', 'samples/advanced.kt']
+    linkMapping {
+        dir = "src/main/kotlin"
+        url = "https://github.com/darkwater/hanze-schedule/blob/master/src/main/kotlin"
+        suffix = "#L"
+    }
+    sourceDirs = files('src/main/kotlin')
 }
 
 task generateIcons {
