@@ -4,7 +4,10 @@
 
     <item
             android:id="@+id/edit_schedule"
-            android:icon="@drawable/ic_launcher"
             android:title="@string/navigate_edit_schedule"/>
+
+    <item
+            android:id="@+id/absent_teachers"
+            android:title="@string/navigate_absent_teachers"/>
 
 </menu>

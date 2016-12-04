@@ -21,8 +21,7 @@ class LoginActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val digirooster = Session.digirooster ?: Digirooster(this)
-        if (Session.digirooster == null) Session.digirooster = digirooster
+        Session.initialize(this)
 
         forgot_password_button.setOnClickListener { view ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://password.hanze.nl/"))
@@ -36,7 +35,7 @@ class LoginActivity : Activity() {
             val username = username_input.text.toString()
             val password = password_input.text.toString()
 
-            digirooster.logIn(username, password) { success ->
+            Hanze.logIn(username, password) { success ->
                 if (success) {
                     val pref = getSharedPreferences("HanzeSchedule", Context.MODE_PRIVATE)
                     val editor = pref.edit()

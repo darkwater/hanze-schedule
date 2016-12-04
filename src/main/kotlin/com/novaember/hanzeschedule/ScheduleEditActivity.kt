@@ -37,9 +37,7 @@ class ScheduleEditActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
-        // Initialize Digirooster API
-        val digirooster = Session.digirooster ?: Digirooster(this)
-        if (Session.digirooster == null) Session.digirooster = digirooster
+        Session.initialize(this)
 
         val pref = getSharedPreferences("HanzeSchedule", Context.MODE_PRIVATE)
         val username = pref.getString("digirooster-username", "")
@@ -47,7 +45,7 @@ class ScheduleEditActivity : AppCompatActivity() {
 
         if (username != "" && password != "") {
             // Attempt login with stored credentials
-            Session.digirooster?.logIn(username, password) { success ->
+            Hanze.logIn(username, password) { success ->
             }
         }
 
@@ -78,6 +76,17 @@ class ScheduleEditActivity : AppCompatActivity() {
         schedule_list.addView(view)
     }
 
+    /**
+     * Closes this activity (go back) when pressing the Toolbar's home button.
+     *
+     * @return Always true
+     */
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+
+        return true
+    }
+
     class ScheduleAddDialog(val scheduleEditActivity: ScheduleEditActivity) : DialogFragment() {
         var selectedYear = 0
 
@@ -87,14 +96,14 @@ class ScheduleEditActivity : AppCompatActivity() {
             val view = inflater.inflate(R.layout.dialog_scheduleadd, null)
 
             // Class input
-            Session.digirooster?.getSchools { schools ->
+            Digirooster.getSchools { schools ->
                 view.school_spinner.adapter = ArrayAdapter(scheduleEditActivity, R.layout.scheduleedit_school, schools)
             }
 
             fun updateClassSpinner() {
                 val school = view.school_spinner.selectedItem as School
 
-                Session.digirooster?.getClasses(school, selectedYear) { classes ->
+                Digirooster.getClasses(school, selectedYear) { classes ->
                     view.class_spinner.adapter = ArrayAdapter(scheduleEditActivity,
                     R.layout.scheduleedit_school, classes)
                 }
@@ -154,7 +163,7 @@ class ScheduleEditActivity : AppCompatActivity() {
         override fun afterTextChanged(s: Editable) {}
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            Session.digirooster?.searchStaff(s.toString(), 10) { response ->
+            Digirooster.searchStaff(s.toString(), 10) { response ->
                 Handler().post {
                     val staffAdapter = ArrayAdapter(context, R.layout.dropdown_item, response)
                     staff_input.setAdapter(staffAdapter)
@@ -162,16 +171,5 @@ class ScheduleEditActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    /**
-     * Closes this activity (go back) when pressing the Toolbar's home button.
-     *
-     * @return Always `true`
-     */
-    override fun onSupportNavigateUp(): Boolean {
-        finish()
-
-        return true
     }
 }

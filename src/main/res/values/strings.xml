@@ -27,6 +27,7 @@
     <string name="select_class">Select a class</string>
 
     <string name="navigate_edit_schedule">Edit schedule</string>
+    <string name="navigate_absent_teachers">Absent teachers</string>
 
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>

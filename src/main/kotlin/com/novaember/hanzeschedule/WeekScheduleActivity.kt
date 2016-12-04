@@ -40,11 +40,9 @@ class WeekScheduleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_weekschedule)
         setSupportActionBar(toolbar)
 
-        // Initialize Digirooster API
-        val digirooster = Session.digirooster ?: Digirooster(this)
-        if (Session.digirooster == null) Session.digirooster = digirooster
+        Session.initialize(this)
 
-        if (digirooster.loggedIn) {
+        if (Session.isLoggedIn()) {
             showSchedule()
         } else {
             // Check for stored credentials
@@ -54,7 +52,7 @@ class WeekScheduleActivity : AppCompatActivity() {
 
             if (username != "" && password != "") {
                 // Attempt login with stored credentials
-                Session.digirooster?.logIn(username, password) { success ->
+                Hanze.logIn(username, password) { success ->
                     if (success) {
                         showSchedule()
                     } else {
@@ -72,6 +70,13 @@ class WeekScheduleActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.edit_schedule -> {
                     val intent = Intent(this, ScheduleEditActivity::class.java)
+                    startActivity(intent)
+
+                    true
+                }
+
+                R.id.absent_teachers -> {
+                    val intent = Intent(this, AbsentTeachersActivity::class.java)
                     startActivity(intent)
 
                     true

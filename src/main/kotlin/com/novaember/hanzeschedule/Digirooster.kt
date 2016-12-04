@@ -13,53 +13,29 @@ import com.android.volley.toolbox.Volley
 
 import java.net.CookieHandler
 import java.net.CookieManager
+import java.net.CookiePolicy
+import java.net.CookieStore
+import java.net.URI
 import java.nio.charset.StandardCharsets
 import java.util.HashMap
 
 import org.json.JSONObject
 import org.json.JSONArray
 
-class Digirooster(val context: Context, val baseUrl: String = "https://digirooster.hanze.nl") {
-    var queue: RequestQueue
-    var loggedIn: Boolean = false
+/**
+ * Functions to interface with Digirooster.
+ */
+object Digirooster {
 
-    init {
-        queue = Volley.newRequestQueue(context)
+    val baseUrl = "https://digirooster.hanze.nl"
 
-        CookieHandler.setDefault(CookieManager())
-    }
-
-    fun logIn(username: String, password: String, callback: (Boolean) -> Unit) {
-        val onSuccess = object : Response.Listener<String> {
-            override fun onResponse(response: String) {
-                loggedIn = true
-                callback(true)
-            }
-        }
-
-        val onError = object : Response.ErrorListener {
-            override fun onErrorResponse(error: VolleyError) {
-                Log.e("HanzeSchedule", "Something went wrong during login", error)
-                // Log.e("HanzeSchedule", error.networkResponse.data.toString(StandardCharsets.UTF_8))
-                callback(false)
-            }
-        }
-
-        val url = baseUrl + "/CookieAuth.dll?Logon"
-        val stringRequest = object : StringRequest(Request.Method.POST, url, onSuccess, onError) {
-            override fun getParams(): HashMap<String, String> {
-                return hashMapOf(
-                        "curl" to "Z2FwebsiteZ2F",
-                        "username" to username,
-                        "password" to password
-                )
-            }
-        }
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest)
-    }
-
+    /**
+     * Generic Digirooster AjaxService call
+     *
+     * @param action      Name of action
+     * @param requestBody Request data
+     * @param callback    Called upon success
+     */
     fun ajaxService(action: String, requestBody: JSONObject?, callback: (String) -> Unit) {
         val successListener = object : Response.Listener<JSONObject> {
             override fun onResponse(response: JSONObject) {
@@ -75,11 +51,11 @@ class Digirooster(val context: Context, val baseUrl: String = "https://digiroost
             }
         }
 
-        val request = JsonObjectRequest(Request.Method.POST, baseUrl + "/website/AjaxService.asmx/$action",
-        requestBody, successListener, errorListener)
+        val url = baseUrl + "/website/AjaxService.asmx/$action"
+        val request = JsonObjectRequest(Request.Method.POST, url, requestBody, successListener, errorListener)
 
         // Add the request to the RequestQueue.
-        queue.add(request)
+        Session.requestQueue.add(request)
     }
 
     fun getResourceSchedule(resourceId: String, resourceType: Resource.Type, callback: (ResourceSchedule) -> Unit) {
